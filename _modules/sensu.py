@@ -1,6 +1,8 @@
 '''
 Sensu Go Execution module
 '''
+import json
+
 from salt.utils.path import which
 
 __virtualname__ = 'sensu'
@@ -17,6 +19,11 @@ def __virtual__():
     return False, 'sensuctl binary not found'
 
 
+def _sensuctl(arguments):
+    cmd = base_cmd + arguments
+    return json.loads(__salt__['cmd.run'](cmd))
+
+
 def list_checks():
     '''
     List checks
@@ -25,6 +32,4 @@ def list_checks():
 
         salt '*' sensu.list_checks
     '''
-    cmd = base_cmd + ['check', 'list']
-    output = __salt__['cmd.run'](cmd).readlines()
-    return output
+    return _sensuctl(['check', 'list'])
