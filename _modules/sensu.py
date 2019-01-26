@@ -24,6 +24,7 @@ def _sensuctl(arguments):
     return json.loads(__salt__['cmd.run'](cmd))
 
 
+# Subcommand 'check'
 def list_checks():
     '''
     List checks
@@ -54,3 +55,14 @@ def create_check(name, command, subscriptions, timeout=None, interval=None):
         arguments.extend(['-i', interval])
     r = _sensuctl(arguments)
     return r
+
+
+def show_check(name):
+    '''
+    Show detailed information about a check
+
+    CLI Example:
+
+        salt '*' sensu.show_check check-cpu
+    '''
+    return _sensuctl(['check', 'info', name])
