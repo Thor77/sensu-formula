@@ -33,3 +33,24 @@ def list_checks():
         salt '*' sensu.list_checks
     '''
     return _sensuctl(['check', 'list'])
+
+
+def create_check(name, command, subscriptions, timeout=None, interval=None):
+    '''
+    Create a new check
+
+    CLI Example:
+
+        salt '*' sensu.create_check check-cpu 'check-cpu.sh -w 75 -c 90' linux
+    '''
+    if type(subscriptions) == list:
+        subscriptions = ','.join(subscriptions)
+    arguments = [
+        'check', 'create', name, '-c', command, '-s', subscriptions
+    ]
+    if timeout:
+        arguments.extend(['-t', timeout])
+    if interval:
+        arguments.extend(['-i', interval])
+    r = _sensuctl(arguments)
+    return r
