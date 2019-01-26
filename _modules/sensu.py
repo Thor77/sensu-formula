@@ -21,7 +21,7 @@ def __virtual__():
 
 def _sensuctl(arguments):
     cmd = base_cmd + arguments
-    ret = __salt__['cmd.run'](cmd)
+    ret = salt['cmd.run'](cmd)
     if ret['retcode'] == 0:
         ret['json'] = json.loads(ret['stdout'])
     return ret
