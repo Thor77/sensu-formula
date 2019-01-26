@@ -69,3 +69,14 @@ def show_check(name):
         salt '*' sensu.show_check check-cpu
     '''
     return _sensuctl(['check', 'info', name])
+
+
+def check_present(name):
+    '''
+    Check if a check is present
+
+    CLI Example:
+
+        salt '*' sensu.check_present check-cpu
+    '''
+    return show_check(name)['retcode'] == 0
