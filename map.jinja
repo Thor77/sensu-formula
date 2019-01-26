@@ -1,0 +1,22 @@
+{% set sensu = salt['pillar.get']('sensu', {
+    'lookup': salt['grains.filter_by']({
+        'default': {
+            'backend': {
+                'pkg': 'sensu-go-backend',
+                'service': 'sensu-backend',
+                'cfg': '/etc/sensu/backend.yml',
+            },
+            'agent': {
+                'pkg': 'sensu-go-agent',
+                'service': 'sensu-agent',
+                'cfg': '/etc/sensu/agent.yml',
+            },
+            'cli': {
+                'pkg': 'sensu-go-cli',
+            },
+        }
+    }),
+    'backend': {},
+    'agent': {},
+    'checks': {},
+}, merge=True) %}
