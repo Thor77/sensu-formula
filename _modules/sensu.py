@@ -21,7 +21,10 @@ def __virtual__():
 
 def _sensuctl(arguments):
     cmd = base_cmd + arguments
-    return json.loads(__salt__['cmd.run'](cmd))
+    ret = __salt__['cmd.run'](cmd)
+    if ret['retcode'] == 0:
+        ret['json'] = json.loads(ret['stdout'])
+    return ret
 
 
 # Subcommand 'check'
