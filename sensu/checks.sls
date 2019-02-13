@@ -1,13 +1,11 @@
 {% from 'sensu/map.jinja' import sensu with context %}
 
-{% for name, attributes in sensu.checks.items() %}
-{% set statefile = salt['temp.file'](prefix='state-') %}
-sensu_check_cfg_{{ name }}:
-  file.managed:
-    - name: {{ statefile }}
-    - contents: {{ attributes|json }}
-
+{% for name, parameters in sensu.checks.iteritems() %}
 sensu_check_{{ name }}:
-  cmd.run:
-    - name: 'sensuctl check create --file {{ statefile }}'
+  sensu.check_present:
+    - name: {{ name }}
+    - command: {{ parameters.command }}
+    - subscriptions: {{ parameters.subscriptions }}
+    - timeout: {{ parameters.get('timeout') }}
+    - interval: {{ paramters.get('interval') }}
 {% endfor %}
