@@ -7,7 +7,7 @@ from salt.utils.path import which
 
 __virtualname__ = 'sensu'
 
-base_cmd = ['sensuctl', '--format', 'json']
+base_cmd = ['sensuctl']
 
 
 def __virtual__():
@@ -20,7 +20,7 @@ def __virtual__():
 
 
 def _sensuctl(arguments):
-    cmd = base_cmd + arguments
+    cmd = base_cmd + arguments + ['--format', 'json']
     ret = __salt__['cmd.run_all'](cmd)
     if ret['retcode'] == 0:
         ret['json'] = json.loads(ret['stdout'])
