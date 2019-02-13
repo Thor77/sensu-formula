@@ -19,10 +19,12 @@ def __virtual__():
     return False, 'sensuctl binary not found'
 
 
-def _sensuctl(arguments):
-    cmd = base_cmd + arguments + ['--format', 'json']
+def _sensuctl(arguments, json_format=True):
+    cmd = base_cmd + arguments
+    if json_format:
+        cmd.extend(['--format', 'json'])
     ret = __salt__['cmd.run_all'](cmd)
-    if ret['retcode'] == 0:
+    if ret['retcode'] == 0 and json_format:
         ret['json'] = json.loads(ret['stdout'])
     return ret
 
@@ -57,7 +59,7 @@ def create_check(name, command, subscriptions, timeout=None, interval=None):
         arguments.extend(['-t', timeout])
     if interval:
         arguments.extend(['-i', interval])
-    r = _sensuctl(arguments)
+    r = _sensuctl(arguments, json_format=False)
     return r
 
 
