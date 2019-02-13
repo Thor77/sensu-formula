@@ -52,7 +52,7 @@ def create_check(name, command, subscriptions, timeout=None, interval=None):
     if type(subscriptions) == list:
         subscriptions = ','.join(subscriptions)
     arguments = [
-        'check', 'create', name, '-c', '"{}"'.format(command),
+        'check', 'create', name, '-c', '\'{}\''.format(command),
         '-s', subscriptions
     ]
     if timeout:
