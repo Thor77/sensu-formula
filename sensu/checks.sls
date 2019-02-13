@@ -7,5 +7,5 @@ sensu_check_{{ name }}:
     - command: {{ parameters.command }}
     - subscriptions: {{ parameters.subscriptions }}
     - timeout: {{ parameters.get('timeout') }}
-    - interval: {{ paramters.get('interval') }}
+    - interval: {{ parameters.get('interval') }}
 {% endfor %}
