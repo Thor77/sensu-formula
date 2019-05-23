@@ -82,3 +82,63 @@ def check_present(name):
         salt '*' sensu.check_present check-cpu
     '''
     return show_check(name)['retcode'] == 0
+
+
+# Subcommand 'asset'
+def list_assets():
+    '''
+    List assets
+
+    CLI Example:
+
+        salt '*' sensu.list_assets
+    '''
+    return _sensuctl(['asset', 'list'])
+
+
+def create_asset(name, url, sha512):
+    '''
+    Create a new asset
+
+    CLI Example:
+
+        salt '*' sensu.create_asset sensu-pagerduty-handler https://... e93ec..
+    '''
+    arguments = [
+        'asset', 'create', name, '-u', url, '--sha512', sha512
+    ]
+    r = _sensuctl(arguments, json_format=False)
+    return r
+
+
+def show_asset(name):
+    '''
+    Show detailed information about an asset
+
+    CLI Example:
+
+        salt '*' sensu.show_asset sensu-pagerduty-handler
+    '''
+    return _sensuctl(['asset', 'info', name])
+
+
+def asset_present(name):
+    '''
+    Check if an asset is present
+
+    CLI Example:
+
+        salt '*' sensu.asset_present sensu-pagerduty-handler
+    '''
+    return show_asset(name)['retcode'] == 0
+
+
+def update_asset(name):
+    '''
+    Update an asset
+
+    CLI Example:
+
+        salt '*' sensu.update_asset sensu-pagerduty-handler
+    '''
+    return _sensuctl(['asset', 'update', name])

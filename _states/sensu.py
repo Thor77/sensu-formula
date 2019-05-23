@@ -48,3 +48,38 @@ def check_present(name, command, subscriptions, timeout=None, interval=None):
         ret['result'] = False
         ret['comment'] = change_ret['stdout']
     return ret
+
+
+def asset_present(name, url, sha512):
+    '''
+    Ensure an asset is present
+
+    name
+        Name of the asset
+
+    url
+        URL location of the asset
+
+    sha512
+        Checksum of the asset
+    '''
+    ret = {}
+    present = __salt__['sensu.asset_present'](name)
+    if present:
+        ret['result'] = True
+        ret['commment'] = 'Asset {} is already present.'.format(name)
+        return ret
+    if __opts__['test']:
+        ret['result'] = None
+        ret['comment'] = 'Asset {} would be created.'.format(name)
+        return ret
+    change_ret = __salt__['sensu.create_asset'](name, url, sha512)
+    if change_ret['retcode'] == 0:
+        ret['result'] = True
+        comment = 'Asset {} was created.'.format(name)
+        ret['comment'] = comment
+        ret['changes']['new'] = comment
+    else:
+        ret['result'] = False
+        ret['comment'] = change_ret['stdout']
+    return ret
