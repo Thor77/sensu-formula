@@ -92,7 +92,10 @@ def update_check_attribute(name, attribute, value):
 
         salt '*' sensu.update_check_attribute command /bin/new-command
     '''
-    return _sensuctl(['check', 'set-{}'.format(attribute), name, value])
+    return _sensuctl(
+        ['check', 'set-{}'.format(attribute), name, value],
+        json_format=False
+    )
 
 
 # Subcommand 'asset'
