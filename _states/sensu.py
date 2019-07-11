@@ -32,7 +32,7 @@ def check_present(name, command, subscriptions, timeout=None, interval=None):
     if present:
         if __opts__['test']:
             ret['result'] = None
-            ret['command'] = 'Check {} would be updated.'.format(name)
+            ret['comment'] = 'Check {} would be updated.'.format(name)
             return ret
         # compare current check with target
         current_state = __salt__['sensu.show_check'](name)['json']
@@ -59,7 +59,7 @@ def check_present(name, command, subscriptions, timeout=None, interval=None):
                     return ret
         ret['result'] = True
         if ret['changes']:
-            ret['command'] = 'Check {} was successfully updated.'.format(name)
+            ret['comment'] = 'Check {} was successfully updated.'.format(name)
         else:
             ret['commment'] = 'Check {} is already present.'.format(name)
         return ret
