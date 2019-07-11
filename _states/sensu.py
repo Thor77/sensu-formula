@@ -55,7 +55,7 @@ def check_present(name, command, subscriptions, timeout=None, interval=None):
                     }
                 else:
                     ret['result'] = False
-                    ret['comment'] = r['stdout']
+                    ret['comment'] = r['stderr'] or r['stdout']
                     return ret
         ret['result'] = True
         if ret['changes']:
