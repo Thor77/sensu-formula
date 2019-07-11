@@ -6,6 +6,10 @@ sensu_check_{{ name }}:
     - name: {{ name }}
     - command: {{ parameters.command }}
     - subscriptions: {{ parameters.subscriptions }}
-    - timeout: {{ parameters.get('timeout') }}
-    - interval: {{ parameters.get('interval') }}
+    {% if 'timeout' in parameters %}
+    - timeout: {{ parameters.timeout }}
+    {% endif %}
+    {% if 'interval' in parameters %}
+    - interval: {{ parameters.interval }}
+    {% endif %}
 {% endfor %}
