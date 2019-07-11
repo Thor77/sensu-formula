@@ -30,6 +30,10 @@ def check_present(name, command, subscriptions, timeout=None, interval=None):
     }
     present = __salt__['sensu.check_present'](name)
     if present:
+        if __opts__['test']:
+            ret['result'] = None
+            ret['command'] = 'Check {} would be updated.'.format(name)
+            return ret
         # compare current check with target
         current_state = __salt__['sensu.show_check'](name)['json']
         target_state = {
