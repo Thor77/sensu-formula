@@ -30,8 +30,34 @@ def check_present(name, command, subscriptions, timeout=None, interval=None):
     }
     present = __salt__['sensu.check_present'](name)
     if present:
+        # compare current check with target
+        current_state = __salt__['sensu.show_check'](name)['json']
+        target_state = {
+            'command': command,
+            'subscriptions': subscriptions,
+            'timeout': timeout,
+            'interval': interval
+        }
+        for attribute, target_value in target_state.items():
+            current_value = current_state[attribute]
+            if target_value and current_value != target_value:
+                r = __salt__['sensu.update_check_attribute'](
+                    name, attribute, target_value
+                )
+                if r['retcode'] == 0:
+                    r['changes'][attribute] = {
+                        'old': current_value,
+                        'new': target_value
+                    }
+                else:
+                    ret['result'] = False
+                    ret['comment'] = r['stdout']
+                    return ret
         ret['result'] = True
-        ret['commment'] = 'Check {} is already present.'.format(name)
+        if ret['changes']:
+            ret['command'] = 'Check {} was successfully updated.'.format(name)
+        else:
+            ret['commment'] = 'Check {} is already present.'.format(name)
         return ret
     if __opts__['test']:
         ret['result'] = None

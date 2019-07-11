@@ -84,6 +84,17 @@ def check_present(name):
     return show_check(name)['retcode'] == 0
 
 
+def update_check_attribute(name, attribute, value):
+    '''
+    Update an attribute of a check
+
+    CLI Example:
+
+        salt '*' sensu.update_check_attribute command /bin/new-command
+    '''
+    return _sensuctl(['check', 'set-{}'.format(attribute), name, value])
+
+
 # Subcommand 'asset'
 def list_assets():
     '''
