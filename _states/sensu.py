@@ -49,7 +49,7 @@ def check_present(name, command, subscriptions, timeout=None, interval=None):
                     name, attribute, target_value
                 )
                 if r['retcode'] == 0:
-                    r['changes'][attribute] = {
+                    ret['changes'][attribute] = {
                         'old': current_value,
                         'new': target_value
                     }
