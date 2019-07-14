@@ -96,23 +96,30 @@ def asset_present(name, url, sha512, filters=[]):
     filters
         Queries used by an entity to determine if it should include the asset
     '''
-    ret = {}
+    ret = {
+        'name': name,
+        'result': None,
+        'changes': {},
+        'comment': ''
+    }
     present = __salt__['sensu.asset_present'](name)
     if present:
         ret['result'] = True
         ret['commment'] = 'Asset {} is already present.'.format(name)
-        return ret
-    if __opts__['test']:
-        ret['result'] = None
-        ret['comment'] = 'Asset {} would be created.'.format(name)
-        return ret
-    change_ret = __salt__['sensu.create_asset'](name, url, sha512, filters)
-    if change_ret['retcode'] == 0:
-        ret['result'] = True
-        comment = 'Asset {} was created.'.format(name)
-        ret['comment'] = comment
-        ret['changes']['new'] = comment
     else:
-        ret['result'] = False
-        ret['comment'] = change_ret['stdout']
+        if __opts__['test']:
+            ret['result'] = None
+            ret['comment'] = 'Asset {} would be created.'.format(name)
+        else:
+            change_ret = __salt__['sensu.create_asset'](
+                name, url, sha512, filters
+            )
+            if change_ret['retcode'] == 0:
+                ret['result'] = True
+                comment = 'Asset {} was created.'.format(name)
+                ret['comment'] = comment
+                ret['changes']['new'] = comment
+            else:
+                ret['result'] = False
+                ret['comment'] = change_ret['stderr'] or change_ret['stdout']
     return ret
