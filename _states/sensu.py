@@ -80,7 +80,7 @@ def check_present(name, command, subscriptions, timeout=None, interval=None):
     return ret
 
 
-def asset_present(name, url, sha512):
+def asset_present(name, url, sha512, filters=[]):
     '''
     Ensure an asset is present
 
@@ -92,6 +92,9 @@ def asset_present(name, url, sha512):
 
     sha512
         Checksum of the asset
+
+    filters
+        Queries used by an entity to determine if it should include the asset
     '''
     ret = {}
     present = __salt__['sensu.asset_present'](name)
@@ -103,7 +106,7 @@ def asset_present(name, url, sha512):
         ret['result'] = None
         ret['comment'] = 'Asset {} would be created.'.format(name)
         return ret
-    change_ret = __salt__['sensu.create_asset'](name, url, sha512)
+    change_ret = __salt__['sensu.create_asset'](name, url, sha512, filters)
     if change_ret['retcode'] == 0:
         ret['result'] = True
         comment = 'Asset {} was created.'.format(name)
