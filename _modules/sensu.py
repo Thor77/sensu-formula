@@ -8,6 +8,12 @@ from salt.utils.path import which
 __virtualname__ = 'sensu'
 
 base_cmd = ['sensuctl']
+base_manifest = {
+    'api_version': 'core/v2',
+    'metadata': {
+        'namespace': 'default'
+    }
+}
 
 
 def __virtual__():
@@ -19,11 +25,11 @@ def __virtual__():
     return False, 'sensuctl binary not found'
 
 
-def _sensuctl(arguments, json_format=True):
+def _sensuctl(arguments, json_format=True, stdin=None):
     cmd = base_cmd + arguments
     if json_format:
         cmd.extend(['--format', 'json'])
-    ret = __salt__['cmd.run_all'](cmd)
+    ret = __salt__['cmd.run_all'](cmd, stdin=stdin)
     if ret['retcode'] == 0 and json_format:
         ret['json'] = json.loads(ret['stdout'])
     return ret
@@ -110,7 +116,7 @@ def list_assets():
     return _sensuctl(['asset', 'list'])
 
 
-def create_asset(name, url, sha512):
+def create_asset(name, url, sha512, filters=[]):
     '''
     Create a new asset
 
@@ -118,11 +124,15 @@ def create_asset(name, url, sha512):
 
         salt '*' sensu.create_asset sensu-pagerduty-handler https://... e93ec..
     '''
-    arguments = [
-        'asset', 'create', name, '-u', url, '--sha512', sha512
-    ]
-    r = _sensuctl(arguments, json_format=False)
-    return r
+    manifest = base_manifest
+    manifest['type'] = 'Asset'
+    manifest['metadata']['name'] = name
+    manifest['spec'] = {
+        'url': url,
+        'sha512': sha512,
+        'filters': filters
+    }
+    return _sensuctl(['create'], json_format=False, stdin=json.dumps(manifest))
 
 
 def show_asset(name):
