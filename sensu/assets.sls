@@ -6,4 +6,7 @@ sensu_asset_{{ name }}:
     - name: {{ name }}
     - url: {{ parameters.url }}
     - sha512: {{ parameters.sha512 }}
+    {% if parameters.filters %}
+    - filters: {{ parameters.filters|tojson }}
+    {% endif %}
 {% endfor %}
